@@ -23,41 +23,57 @@ int main()
 
 std::shared_ptr<Verosimilitud> Vp = std::make_shared<Verosimilitud>(3,0,2);
 
-//std::vector<double> Verosimilitud::MinLLH(std::vector<double> param, std::vector<double> low_bound, std::vector<double> high_bound, std::vector<bool> param_to_minimize)
+std::vector<double> perm_param = {2.0, 0.01, 1.0, 1.0};
+std::vector<double> param {2.0, 0.01, 1.0, 1.0};
 
-double max = 4.0;
+std::vector<double> loop_low ={1.0, -.1, 0.5, 0.825};
+std::vector<double> loop_high={3.0, .05, 2.0, 1.125};
 
-for (double prof_param = 0.01; prof_param < max; prof_param += 0.01){
+std::vector<double> low_bound = {0.01, -0.15, 0.5, 0.875};
+std::vector<double> high_bound = {10.0, 10.00, 10.0, 10.0};
 
-	std::vector<double> param = {prof_param, 0.01, 1.0, 1.0};
-	// std::vector<double> low_bound = {0.01, -0.05, 0.5, 0.875};
-// 	std::vector<double> high_bound = {3.0, 0.05, 1.5, 1.125};
+std::vector<bool> perm_param_to_minimize = {true, true, true, true};
+std::vector<bool> param_to_minimize = {true, true, true, true};
+
+
+for (unsigned int i = 0; i<4; i++){
+
+	for (double prof_param = loop_low[i]; prof_param < loop_high[i]; prof_param += (loop_high[i]-loop_low[i])/5000.0){
 	
-	std::vector<double> low_bound = {0.01, -0.15, 0.5, 0.875};
-	std::vector<double> high_bound = {3.0, 10.00, 10.0, 10.0};
+	
+	
+		param = perm_param;
+		param[i] = prof_param;
+	
+		param_to_minimize = perm_param_to_minimize;
+		param_to_minimize[i] = false;
 
-	std::vector<bool> param_to_minimize = {false, true, true, true};
+		//std::cout << "================ BEGIN CODE =================" <<std::endl;
 
-	//std::cout << "================ BEGIN CODE =================" <<std::endl;
+		dlib::matrix<double,0,1> r(4);
+		for(size_t i=0; i<param.size(); i++) r(i)=param[i];
+		// std::cout << "Chi2Initial: "<< std::endl << Vp->Chi2(r) <<std::endl;
+		// std::cout << "Chi2GradientInitial: "<< std::endl << Vp->Chi2Gradient(r) <<std::endl;
+		// 
+		// std::cout << "================ BEGIN MINIMIZATION =================" <<std::endl;
 
-	dlib::matrix<double,0,1> r(4);
-	for(size_t i=0; i<param.size(); i++) r(i)=param[i];
-	// std::cout << "Chi2Initial: "<< std::endl << Vp->Chi2(r) <<std::endl;
-	// std::cout << "Chi2GradientInitial: "<< std::endl << Vp->Chi2Gradient(r) <<std::endl;
-	// 
-	// std::cout << "================ BEGIN MINIMIZATION =================" <<std::endl;
+		std::vector<double> result = Vp->MinLLH(param, low_bound, high_bound, param_to_minimize);
 
-	std::vector<double> result = Vp->MinLLH(param, low_bound, high_bound, param_to_minimize);
+		// std::cout << "================ END MINIMIZATION =================" <<std::endl;
 
-	// std::cout << "================ END MINIMIZATION =================" <<std::endl;
+		// for(unsigned int i=0; i<result.size(); i++){
+		// std::cout << result[i] << " ";
+		// }
 
-	// for(unsigned int i=0; i<result.size(); i++){
-	// std::cout << result[i] << " ";
-	// }
-
-	std::cout<< prof_param << "," << result[result.size()-1] << "," ;
+//		std::cout<< prof_param << "," << result[result.size()-1] << "," ;
 
 
+	}
+	
+	std::cout<<std::endl;
+	std::cout<<std::endl;
+	std::cout<<std::endl;
+	
 }
 std::cout<<std::endl;
 
