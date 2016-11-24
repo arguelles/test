@@ -45,6 +45,12 @@ int main() {
   std::vector<bool> perm_param_to_minimize = {true, true, true, true};
   std::vector<bool> param_to_minimize = {true, true, true, true};
 
+
+  if(!quiet)
+    std::cout << "Finding global minima." << std::endl;
+  std::vector<double> bf =
+        Vp->MinLLH(param, low_bound, high_bound, param_to_minimize);
+
   if(!quiet)
     std::cout << "Begin loop ..." << std::endl;
   for (unsigned int i = 0; i < 4; i++) {
@@ -52,8 +58,6 @@ int main() {
       std::cout << "Doing parameter: " << i << std::endl;
     for (double prof_param = loop_low[i]; prof_param < loop_high[i];
          prof_param += (loop_high[i] - loop_low[i]) / 100.0) {
-      if(!quiet)
-        std::cout << prof_param << std::endl;
 
       param = perm_param;
       param[i] = prof_param;
@@ -88,12 +92,8 @@ int main() {
       // std::cout << result[i] << " ";
       // }
 
-      //		std::cout<< prof_param << "," << result[result.size()-1]
-      //<< "," ;
+      std::cout<< prof_param << "," << result[result.size()-1]-bf.back() << std::endl;
     }
-
-    std::cout << std::endl;
-    std::cout << std::endl;
     std::cout << std::endl;
   }
   std::cout << std::endl;
