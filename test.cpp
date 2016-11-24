@@ -14,6 +14,7 @@
 #include <cfloat>
 #include <math.h>
 #include <string>
+#include <limits>
 
 #include <dlib/optimization.h>
 #include <dlib/member_function_pointer.h>
@@ -26,18 +27,18 @@ int main() {
   // conventional_flux.h5 contains the DOM effiency correction of the Weaver Sample. Thanks Chris.
   if(!quiet)
     std::cout << "Initializing Verosimilitud instance." << std::endl;
-  std::shared_ptr<Verosimilitud> Vp = std::make_shared<Verosimilitud>(3, 0, 2,root+"/data/Marjon_Int_HondaGaisser.h5",root+"/data/effective_area.h5",root+"/data/conventional_flux.h5");
+  std::shared_ptr<Verosimilitud> Vp = std::make_shared<Verosimilitud>(3, 0, 2,root+"/data/",root+"/data/Marjon_Int_HondaGaisser.h5",root+"/data/effective_area.h5",root+"/data/conventional_flux.h5");
 
   if(!quiet)
     std::cout << "Setting parameter scan ranges." << std::endl;
-  std::vector<double> perm_param = {2.0, 0.01, 1.0, 1.0};
-  std::vector<double> param{2.0, 0.01, 1.0, 1.0};
+  std::vector<double> perm_param = {1.0, 0.01, 1.0, 1.0};
+  std::vector<double> param{1.0, 0.01, 1.0, 1.0};
 
-  std::vector<double> loop_low = {1.0, -.1, 0.5, 0.825};
-  std::vector<double> loop_high = {3.0, .05, 2.0, 1.125};
+  std::vector<double> loop_low = {0.1, -.1, 0.5, 0.825};
+  std::vector<double> loop_high = {2.0, .05, 2.0, 1.125};
 
   std::vector<double> low_bound = {0.01, -0.15, 0.5, 0.875};
-  std::vector<double> high_bound = {3.0, 1.00, 3.0, 2.0};
+  std::vector<double> high_bound = {std::numeric_limits<double>::max(), 10.00, std::numeric_limits<double>::max(), 10.0};
 
   if(!quiet)
     std::cout << "Setting parameter to minimize." << std::endl;
@@ -70,7 +71,9 @@ int main() {
        std::cout << "Chi2Initial: "<< std::endl << Vp->Chi2(r) <<std::endl;
        std::cout << "Chi2GradientInitial: "<< std::endl << Vp->Chi2Gradient(r)
        <<std::endl;
-       */
+       std::cout << "Chi2GradientInitialNumerical: " << std::endl << dlib::derivative(*Vp)(r) << std::endl;
+       exit(0);
+      */
 
       // std::cout << "================ BEGIN MINIMIZATION ================="
       // <<std::endl;
