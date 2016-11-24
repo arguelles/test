@@ -3,6 +3,7 @@ CC = clang++
 
 # compiler flags
 CFLAGS = -Wall -g -std=c++11
+#CFLAGS = -Wall -O3 -std=c++11
 
 # define any directories containing header files
 

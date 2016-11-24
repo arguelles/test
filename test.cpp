@@ -18,11 +18,18 @@
 #include <dlib/optimization.h>
 #include <dlib/member_function_pointer.h>
 
+
 int main() {
+  bool quiet=false;
+  std::string root = "/Users/carguelles/DropboxMIT/NeutrinoDecay/test/";
 
   // conventional_flux.h5 contains the DOM effiency correction of the Weaver Sample. Thanks Chris.
-  std::shared_ptr<Verosimilitud> Vp = std::make_shared<Verosimilitud>(3, 0, 2,"./data/Marjon_Int_HondaGaisser.h5","./data/effective_area.h5","./data/conventional_flux.h5");
+  if(!quiet)
+    std::cout << "Initializing Verosimilitud instance." << std::endl;
+  std::shared_ptr<Verosimilitud> Vp = std::make_shared<Verosimilitud>(3, 0, 2,root+"/data/Marjon_Int_HondaGaisser.h5",root+"/data/effective_area.h5",root+"/data/conventional_flux.h5");
 
+  if(!quiet)
+    std::cout << "Setting parameter scan ranges." << std::endl;
   std::vector<double> perm_param = {2.0, 0.01, 1.0, 1.0};
   std::vector<double> param{2.0, 0.01, 1.0, 1.0};
 
@@ -30,15 +37,22 @@ int main() {
   std::vector<double> loop_high = {3.0, .05, 2.0, 1.125};
 
   std::vector<double> low_bound = {0.01, -0.15, 0.5, 0.875};
-  std::vector<double> high_bound = {10.0, 10.00, 10.0, 10.0};
+  std::vector<double> high_bound = {3.0, 1.00, 3.0, 2.0};
 
+  if(!quiet)
+    std::cout << "Setting parameter to minimize." << std::endl;
   std::vector<bool> perm_param_to_minimize = {true, true, true, true};
   std::vector<bool> param_to_minimize = {true, true, true, true};
 
+  if(!quiet)
+    std::cout << "Begin loop ..." << std::endl;
   for (unsigned int i = 0; i < 4; i++) {
-
+    if(!quiet)
+      std::cout << "Doing parameter: " << i << std::endl;
     for (double prof_param = loop_low[i]; prof_param < loop_high[i];
-         prof_param += (loop_high[i] - loop_low[i]) / 5000.0) {
+         prof_param += (loop_high[i] - loop_low[i]) / 100.0) {
+      if(!quiet)
+        std::cout << prof_param << std::endl;
 
       param = perm_param;
       param[i] = prof_param;
@@ -49,13 +63,15 @@ int main() {
       // std::cout << "================ BEGIN CODE ================="
       // <<std::endl;
 
+      /*
       dlib::matrix<double, 0, 1> r(4);
       for (size_t i = 0; i < param.size(); i++)
         r(i) = param[i];
-      // std::cout << "Chi2Initial: "<< std::endl << Vp->Chi2(r) <<std::endl;
-      // std::cout << "Chi2GradientInitial: "<< std::endl << Vp->Chi2Gradient(r)
-      // <<std::endl;
-      //
+       std::cout << "Chi2Initial: "<< std::endl << Vp->Chi2(r) <<std::endl;
+       std::cout << "Chi2GradientInitial: "<< std::endl << Vp->Chi2Gradient(r)
+       <<std::endl;
+       */
+
       // std::cout << "================ BEGIN MINIMIZATION ================="
       // <<std::endl;
 
